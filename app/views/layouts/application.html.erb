@@ -2,13 +2,30 @@
 <html>
 <head>
   <title>Scorer</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
+  <%= stylesheet_link_tag "application", :media => "all" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
-<%= yield %>
+  <!-- <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <div class="nav-collapse collapse">
+          <ul class="nav">
+            <li><a href="/#/players">Players</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div> -->
 
+  <div class="container" id="app">
+    <%= yield %>
+  </div>
+
+<%= javascript_include_tag "application" %>
+<script type="text/javascript">
+  require('app');
+</script>
 </body>
 </html>
