@@ -1,61 +1,151 @@
-//
-//var $ = require('jquery');
-//
-var A = Em.Application.create({
+/* Vars */
+
+var App = Em.Application.create({
   VERSION: '1.0',
-  rootElement: '#app'
+  rootElement: '#app',
+  ready: function() {
+    console.log(this.get('router'));
+  }
 });
+
 /* Models */
-A.Player = Em.Object.extend();
-A.Player.reopenClass({
-  allPlayers: [],
-  find: function() {
+
+App.Match = Em.Object.extend({
+  games: []
+});
+
+App.Match.reopenClass({
+  finished: function(match) {
     $.ajax({
-      url: '/players.json',
-      context: this
+      url: '/match/finished',
+      data: match.get('id')
+    }).fail(function() {
+      console.log('That\'s a fail!');
     }).done(function(resp) {
-      _.each(resp, function(p){
-        this.allPlayers.addObject(A.Player.create(p))
-      }, this);
+
+    })
+  }
+});
+
+App.Game = Em.Object.extend({
+  score1: 0,
+  score2: 0,
+  scoreChanged: function() {
+    if (this.get('score1') >= 11 || this.get('score2') >= 11)
+    {
+      App.Game.save(App.get('router.gameController.game'));
+    }
+  }.observes('score1', 'score2')
+});
+
+App.Game.reopenClass({
+  save: function(game) {
+    $.ajax({
+      url: '/match/game',
+      data: game.getProperties('id', 'score1', 'score2')
+    }).done(function(resp) {
+      console.log('blah')
     });
-    return this.allPlayers;
   }
 });
 
 /* Controllers */
-A.ApplicationController = Em.Controller.extend();
-A.PlayersController = Em.ArrayController.extend();
+
+App.ApplicationController = Em.Controller.extend();
+App.StartController = Em.Controller.extend();
+App.GameController = Em.Controller.extend();
+App.GameResultController = Em.Controller.extend();
+App.ResultsController = Em.Controller.extend();
+App.LeadersController = Em.Controller.extend();
 
 /* Views */
-A.ApplicationView = Em.View.extend({
-  templateName: 'application'
+
+App.ApplicationView = Em.View.extend({
+  templateName: 'app-tpl'
+});
+App.StartView = Em.View.extend({
+  templateName: 'start-tpl'
+});
+App.GameView = Em.View.extend({
+  templateName: 'game-tpl'
+});
+App.GameResultView = Em.View.extend({
+  templateName: 'game-result-tpl'
+});
+App.ResultsView = Em.View.extend({
+  templateName: 'results-tpl'
+});
+App.LeadersView = Em.View.extend({
+  templateName: 'leaders-tpl'
 });
 
-A.PlayersView = Em.View.extend({
-  templateName: 'players'
-})
+/* Routes */
 
+App.BaseRoute = Em.Route.extend({
+  enter: function(router) {
+    console.log('Enter route: ' + router.get('currentState.name'));
+  },
+  exit: function(router) {
+    console.log('Exit route: ' + router.get('currentState.name'));
+  }
+});
 
-A.Router = Em.Router.extend({
+App.Router = Em.Router.extend({
+  enableLogging: true,
   root: Em.Route.extend({
-    index: Em.Route.extend({
+    index: App.BaseRoute.extend({
       route: '/',
-      redirectsTo: 'players'
+      redirectsTo: 'play'
     }),
-    players: Em.Route.extend({
-      route: '/players',
-      //showPlayer: Em.Route.transitionTo('player'),
-      connectOutlets: function(router){
-        router.get('applicationController').connectOutlet('players', A.Player.find());
+    play: App.BaseRoute.extend({
+      route: '/play',
+      startGame: Em.Route.transitionTo('game'),
+      connectOutlets: function(router) {
+        console.log(router.get('applicationController'));
+        router.get('applicationController').connectOutlet('start');
       }
     }),
-    player: Em.Route.extend({
-      route: '/player/:id'
+    game: App.BaseRoute.extend({
+      route: '/game',
+      enter: function(router, context) {
+        router.get('gameController').set('game', App.Game.create());
+        console.log(router.get('gameController').get('game'));
+      },
+      pointWon: function(router, context) {
+        var game = router.get('gameController.game');
+        if ($(context.target).is('.score-1'))
+        {
+          game.incrementProperty('score1');
+        }
+        else
+        {
+          game.incrementProperty('score2');
+        }
+      },
+      result: App.BaseRoute.extend({
+        route: '/result',
+        connectOutlets: function(router) {
+          router.get('applicationController').connectOutlet('gameResult');
+        }
+      }),
+      connectOutlets: function(router) {
+        router.get('applicationController').connectOutlet('game');
+      }
     }),
-    results: Em.Route.extend({
-      route: '/results'
+    results: App.BaseRoute.extend({
+      route: '/result/all',
+      connectOutlets: function(router) {
+        router.get('applicationController').connectOutlet('results');
+      }
     }),
+    leaders: App.BaseRoute.extend({
+      route: '/leaders',
+      connectOutlets: function(router) {
+        router.get('applicationController').connectOutlet('leaders');
+      }
+    })
   })
 });
-A.initialize();
-module.exports = A;
+
+App.initialize();
+module.exports = App;
