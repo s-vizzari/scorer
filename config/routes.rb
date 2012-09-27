@@ -1,5 +1,12 @@
 Scorer::Application.routes.draw do
-  resources :players
+
+  resources :players do
+    resources :matches
+  end
+
+  resources :matches
+
+  resources :games
 
   get "home/index"
 
