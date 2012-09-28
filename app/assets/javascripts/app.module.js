@@ -65,6 +65,8 @@ App.LeadersController = Em.Controller.extend();
 App.ApplicationView = Em.View.extend({
   templateName: 'app-tpl',
   classNames: ['app-view'],
+  classNameBindings: ['controller.playingGame:playing'],
+  playingGame: false,
   eventManager: Em.Object.create({
     finishMatch: function(evt, view) {
       console.log('Yay!');
@@ -107,6 +109,9 @@ App.Router = Em.Router.extend({
     }),
     play: App.BaseRoute.extend({
       route: '/play',
+      enter: function(router) {
+        router.get('applicationController').set('playingGame', false);
+      },
       startGame: Em.Route.transitionTo('game'),
       connectOutlets: function(router) {
         console.log(router.get('applicationController'));
@@ -117,6 +122,7 @@ App.Router = Em.Router.extend({
       route: '/game',
       enter: function(router, context) {
         router.get('gameController').set('game', App.Game.create());
+        router.get('applicationController').set('playingGame', true);
       },
       finishMatch: function(router, context) {
         console.log('hi');
