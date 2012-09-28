@@ -2,12 +2,27 @@
 
 
 
-window.App = Em.Application.create({
+App = Em.Application.create({
   VERSION: '1.0',
   rootElement: '#app'
 });
 
 /* Models */
+App.Player = Em.Object.extend({
+  allPlayers: [],
+  find: function(){
+    this.allPlayers = [];
+    $.ajax({
+      url: '/players.json',
+      context: this
+    }).done(function(resp){
+        resp.forEach(function(player){
+          this.allPlayers.addObject(App.Player.create(player));
+        }, this);
+    });
+    return this.allPlayers;
+  }
+})
 
 App.Match = Em.Object.extend({
   games: []
@@ -43,7 +58,6 @@ App.Game = Em.Object.extend({
 
 App.Game.reopenClass({
   save: function(game) {
-    debugger;
     $.ajax({
       url: '/games.json',
       type: "POST",

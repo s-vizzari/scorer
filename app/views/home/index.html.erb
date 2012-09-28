@@ -19,7 +19,7 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="start-tpl">
-  <a {{action startGame}} class="btn btn-large">Lets play! <i class="icon-chevron-right"></i></a>  
+  <a {{action startGame}} class="btn btn-large">Lets play! <i class="icon-chevron-right"></i></a>
 </script>
 
 <script type="text/x-handlebars" data-template-name="game-tpl">
@@ -41,3 +41,9 @@
   
 </script>
 
+<script type="text/x-handlebars" data-template-name="players-tpl">
+  <ul class="players">
+    <li><a {{action pointWon}} class="score-1">{{controller.game.score1}}</a></li>
+    <li><a {{action pointWon}} class="score-2">{{controller.game.score2}}</a></li>
+  </ul>
+</script>
