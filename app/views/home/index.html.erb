@@ -1,23 +1,35 @@
 <script type="text/javascript">
   require('app');
 </script>
-<script type="text/x-handlebars" data-template-name="application">
+
+<script type="text/x-handlebars" data-template-name="app-tpl">
   <div class="row">
-    <div class="span2">
-      <ul class="nav nav-tabs nav-stacked">
-        <li><a href="/#/players">Players</a></li>
-        <li><a href="/#/results">Results</a></li>
-      </ul>
-    </div>
-    <div class="span10">
-      {{ outlet }}
+    <div class="span12">
+      {{outlet}}
     </div>
   </div>
 </script>
-<script type="text/x-handlebars" data-template-name="players">
-  {{#each player in controller}}
-    <ul>
-      <li><a href="/#/player/{{unbound player.id}}">{{player.first_name}}</a></li>
-    </ul>
-  {{/each}}
+
+<script type="text/x-handlebars" data-template-name="start-tpl">
+  <a {{action startGame}} class="btn btn-large btn-success">START GAME</a>  
 </script>
+
+<script type="text/x-handlebars" data-template-name="game-tpl">
+  <ul class="game">
+    <li><a {{action pointWon}} class="score-1">{{controller.game.score1}}</a></li>
+    <li><a {{action pointWon}} class="score-2">{{controller.game.score2}}</a></li>
+  </ul>
+</script>
+
+<script type="text/x-handlebars" data-template-name="game-results-tpl">
+  
+</script>
+
+<script type="text/x-handlebars" data-template-name="results-tpl">
+  
+</script>
+
+<script type="text/x-handlebars" data-template-name="leaders-tpl">
+  
+</script>
+

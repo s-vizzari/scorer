@@ -2,10 +2,7 @@
 
 var App = Em.Application.create({
   VERSION: '1.0',
-  rootElement: '#app',
-  ready: function() {
-    console.log(this.get('router'));
-  }
+  rootElement: '#app'
 });
 
 /* Models */
