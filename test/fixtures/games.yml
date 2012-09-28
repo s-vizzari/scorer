@@ -1,9 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  score1: 1
-  score2: 1
+  match_id: 1
+  score1: 10
+  score2: 21
 
 two:
-  score1: 1
-  score2: 1
+  match_id: 1
+  score1: 11
+  score2: 21
