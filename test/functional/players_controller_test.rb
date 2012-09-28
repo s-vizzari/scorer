@@ -2,7 +2,7 @@ require 'test_helper'
 
 class PlayersControllerTest < ActionController::TestCase
   setup do
-    @player = players(:one)
+    @player = players(:jason)
   end
 
   test "should get index" do

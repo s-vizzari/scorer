@@ -18,7 +18,7 @@ class MatchesControllerTest < ActionController::TestCase
 
   test "should create match" do
     assert_difference('Match.count') do
-      post :create, match: {  }
+      post :create, match: { :player1 => @match.player1, :player2 => @match.player2 }
     end
 
     assert_redirected_to match_path(assigns(:match))
