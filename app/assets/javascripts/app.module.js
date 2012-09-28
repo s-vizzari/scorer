@@ -1,6 +1,8 @@
 /* Vars */
 
-var App = Em.Application.create({
+
+
+window.App = Em.Application.create({
   VERSION: '1.0',
   rootElement: '#app'
 });
@@ -27,8 +29,11 @@ App.Match.reopenClass({
 App.Game = Em.Object.extend({
   score1: 0,
   score2: 0,
+  finished: function() {
+    return (this.get('score1') === 11 || this.get('score2') === 11);
+  }.property('score1', 'score2'),
   scoreChanged: function() {
-    if (this.get('score1') >= 11 || this.get('score2') >= 11)
+    if (this.get('finished') === true)
     {
       App.Game.save(App.get('router.gameController.game'));
     }
@@ -41,7 +46,7 @@ App.Game.reopenClass({
       url: '/match/game',
       data: game.getProperties('id', 'score1', 'score2')
     }).done(function(resp) {
-      console.log('blah')
+      // TODO: Our game was saved so now we need to generate a new game...
     });
   }
 });
@@ -58,7 +63,13 @@ App.LeadersController = Em.Controller.extend();
 /* Views */
 
 App.ApplicationView = Em.View.extend({
-  templateName: 'app-tpl'
+  templateName: 'app-tpl',
+  classNames: ['app-view'],
+  eventManager: Em.Object.create({
+    finishMatch: function(evt, view) {
+      console.log('Yay!');
+    }
+  })
 });
 App.StartView = Em.View.extend({
   templateName: 'start-tpl'
@@ -106,7 +117,9 @@ App.Router = Em.Router.extend({
       route: '/game',
       enter: function(router, context) {
         router.get('gameController').set('game', App.Game.create());
-        console.log(router.get('gameController').get('game'));
+      },
+      finishMatch: function(router, context) {
+        console.log('hi');
       },
       pointWon: function(router, context) {
         var game = router.get('gameController.game');
@@ -119,12 +132,6 @@ App.Router = Em.Router.extend({
           game.incrementProperty('score2');
         }
       },
-      result: App.BaseRoute.extend({
-        route: '/result',
-        connectOutlets: function(router) {
-          router.get('applicationController').connectOutlet('gameResult');
-        }
-      }),
       connectOutlets: function(router) {
         router.get('applicationController').connectOutlet('game');
       }
@@ -145,4 +152,7 @@ App.Router = Em.Router.extend({
 });
 
 App.initialize();
+
+console.log(App.router)
+
 module.exports = App;

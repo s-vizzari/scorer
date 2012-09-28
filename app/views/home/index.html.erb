@@ -3,6 +3,14 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="app-tpl">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="#">Scorer</a>
+        <a {{action finishMatch}} class="btn btn-small pull-right finish-match">Finish match <i class="icon-ok-sign"></i></a>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="span12">
       {{outlet}}
@@ -11,7 +19,7 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="start-tpl">
-  <a {{action startGame}} class="btn btn-large btn-success">START GAME</a>  
+  <a {{action startGame}} class="btn btn-large">Lets play! <i class="icon-chevron-right"></i></a>  
 </script>
 
 <script type="text/x-handlebars" data-template-name="game-tpl">

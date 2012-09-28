@@ -8,6 +8,18 @@
 body {
   background: #eee;
   position: relative;
+  padding: 60px 0 40px;
+}
+
+.app-view {
+  .finish-match {
+    display: none;
+  }
+  .playing {
+    .finish-match {
+      display: block;
+    }
+  }
 }
 
 .game {
@@ -15,9 +27,13 @@ body {
   margin: 0;
   padding: 0;
   li {
+    border: 8px solid white;
+    &:first-child {
+      border-bottom: none;
+    }
     a {
       background: green;
-      border: 2px solid white;
+      cursor: pointer;
       color: white;
       display: block;
       font-size: 100px;
@@ -25,6 +41,11 @@ body {
       line-height: 300px;
       text-align: center;
       width: 100%;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -o-user-select: none;
+      user-select: none;
       &:hover {
         color: black;
         text-decoration: none;
