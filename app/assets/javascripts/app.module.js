@@ -27,6 +27,7 @@ App.Match.reopenClass({
 });
 
 App.Game = Em.Object.extend({
+  match_id: 1,
   score1: 0,
   score2: 0,
   finished: function() {
@@ -42,10 +43,14 @@ App.Game = Em.Object.extend({
 
 App.Game.reopenClass({
   save: function(game) {
+    debugger;
     $.ajax({
-      url: '/match/game',
-      data: game.getProperties('id', 'score1', 'score2')
+      url: '/games.json',
+      type: "POST",
+      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+      data: {game: game.getProperties('match_id', 'score1', 'score2')}
     }).done(function(resp) {
+      console.log(resp);
       // TODO: Our game was saved so now we need to generate a new game...
     });
   }
