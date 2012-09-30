@@ -39,4 +39,9 @@ describe('A Match', function(){
 
 describe('A Player', function(){
 
+  it("should fetch a list of players", function(){
+    var players = App.Player.find();
+    expect(players.get('allPlayers').length).toBe(3);
+  });
+  
 });
