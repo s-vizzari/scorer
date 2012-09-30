@@ -14,5 +14,5 @@
 //= require handlebars
 //= require underscore
 //= require ember
-//= require app.module
+//= require app
 //= require_tree .

@@ -30,6 +30,7 @@ end
 group :development, :test do
   gem 'jasminerice'
   gem 'guard-jasmine'
+  gem 'rb-fsevent', '~> 0.9.1'
 end
 
 #gem 'jquery-rails'

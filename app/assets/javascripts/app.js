@@ -1,7 +1,5 @@
 /* Vars */
 
-
-
 App = Em.Application.create({
   VERSION: '1.0',
   rootElement: '#app'
@@ -180,4 +178,4 @@ App.initialize();
 
 console.log(App.router)
 
-module.exports = App;
+//module.exports = App;
