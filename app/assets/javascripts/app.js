@@ -43,15 +43,20 @@ App.Game = Em.Object.extend({
   match_id: 1,
   score1: 0,
   score2: 0,
+  maxScore: 11,
   finished: function() {
-    return (this.get('score1') === 11 || this.get('score2') === 11);
-  }.property('score1', 'score2'),
+    return (this.get('score1') === this.get('maxScore') ||
+      this.get('score2') === this.get('maxScore'));
+  }.property('score1',
+    'score2',
+    'maxScore'),
   scoreChanged: function() {
     if (this.get('finished') === true)
     {
       App.Game.save(App.get('router.gameController.game'));
     }
-  }.observes('score1', 'score2')
+  }.observes('score1',
+    'score2')
 });
 
 App.Game.reopenClass({
@@ -76,6 +81,7 @@ App.GameController = Em.Controller.extend();
 App.GameResultController = Em.Controller.extend();
 App.ResultsController = Em.Controller.extend();
 App.LeadersController = Em.Controller.extend();
+App.MessageController = Em.Controller.extend();
 
 /* Views */
 
@@ -105,41 +111,45 @@ App.ResultsView = Em.View.extend({
 App.LeadersView = Em.View.extend({
   templateName: 'leaders-tpl'
 });
+App.MessageView = Em.View.extend({
+  templateName: 'message-tpl'
+});
 
 /* Routes */
 
 App.BaseRoute = Em.Route.extend({
   enter: function(router) {
-    console.log('Enter route: ' + router.get('currentState.name'));
+    router.get('applicationController')
+      .set('playingGame', false);
   },
   exit: function(router) {
-    console.log('Exit route: ' + router.get('currentState.name'));
+    //console.log('Exit route: ' + router.get('currentState.name'));
   }
 });
 
 App.Router = Em.Router.extend({
   enableLogging: true,
-  root: Em.Route.extend({
+  root: App.BaseRoute.extend({
     index: App.BaseRoute.extend({
       route: '/',
       redirectsTo: 'play'
     }),
     play: App.BaseRoute.extend({
       route: '/play',
-      enter: function(router) {
-        router.get('applicationController').set('playingGame', false);
-      },
       startGame: Em.Route.transitionTo('game'),
       connectOutlets: function(router) {
         console.log(router.get('applicationController'));
-        router.get('applicationController').connectOutlet('start');
+        router.get('applicationController')
+          .connectOutlet('start');
       }
     }),
     game: App.BaseRoute.extend({
       route: '/game',
       enter: function(router, context) {
-        router.get('gameController').set('game', App.Game.create());
-        router.get('applicationController').set('playingGame', true);
+        router.get('gameController')
+          .set('game', App.Game.create());
+        router.get('applicationController')
+          .set('playingGame', true);
       },
       finishMatch: function(router, context) {
         console.log('hi');
@@ -156,19 +166,22 @@ App.Router = Em.Router.extend({
         }
       },
       connectOutlets: function(router) {
-        router.get('applicationController').connectOutlet('game');
+        router.get('applicationController')
+          .connectOutlet('game');
       }
     }),
     results: App.BaseRoute.extend({
       route: '/result/all',
       connectOutlets: function(router) {
-        router.get('applicationController').connectOutlet('results');
+        router.get('applicationController')
+          .connectOutlet('results');
       }
     }),
     leaders: App.BaseRoute.extend({
       route: '/leaders',
       connectOutlets: function(router) {
-        router.get('applicationController').connectOutlet('leaders');
+        router.get('applicationController')
+          .connectOutlet('leaders');
       }
     })
   })
@@ -176,6 +189,10 @@ App.Router = Em.Router.extend({
 
 App.initialize();
 
+<<<<<<< HEAD:app/assets/javascripts/app.js
 console.log(App.router)
 
 //module.exports = App;
+=======
+module.exports = App;
+>>>>>>> Added message structure/template.:app/assets/javascripts/app.module.js
