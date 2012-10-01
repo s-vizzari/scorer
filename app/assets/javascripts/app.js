@@ -63,9 +63,9 @@ App.Match.reopenClass({
       type: "PUT",
       data: { match: { finished: true } }
     }).fail(function() {
-      console.log('That\'s a fail!');
+      // console.log('That\'s a fail!');
     }).done(function(resp) {
-      console.log('We just finished that game!');
+      // console.log('We just finished that game!');
       App.router.transitionTo('play');
     })
   }
@@ -207,7 +207,7 @@ App.Router = Em.Router.extend({
         $('[data-player-handle="'+$playerBtn.data('playerHandle')+'"]').not($playerBtn).each(function(i, el) {
           $(el).toggleClass('disabled');
         });
-        $playerBtn.toggleClass('btn-inverse');
+        $playerBtn.toggleClass('btn-primary');
       },
       connectOutlets: function(router) {
         console.log(router.get('applicationController'));
