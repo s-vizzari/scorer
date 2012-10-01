@@ -18,8 +18,17 @@
   </div>
 </script>
 
-<script type="text/x-handlebars" data-template-name="start-tpl">
-  <a {{action startGame}} class="btn btn-large">Lets play! <i class="icon-chevron-right"></i></a>
+<script type="text/x-handlebars" data-template-name="select-team-tpl">
+  <div class="span6">
+    <div class="team team-1 well">
+      <h3>Team</h3>
+      <ul>
+        {{#each player in players}}
+          <li><a href="#" class="btn">{{player.handle}}</a></li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-handlebars" data-template-name="game-tpl">

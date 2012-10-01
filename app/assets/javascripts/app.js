@@ -6,6 +6,7 @@ App = Em.Application.create({
 });
 
 /* Models */
+
 App.Player = Em.Object.extend();
 App.Player.reopenClass({
   allPlayers: [],
@@ -22,6 +23,10 @@ App.Player.reopenClass({
     }).done(this.findComplete);
     return this.allPlayers;
   }
+});
+
+App.Team = Em.Object.extend({
+  players: []
 });
 
 App.Match = Em.Object.extend({
@@ -98,8 +103,23 @@ App.ApplicationView = Em.View.extend({
     }
   })
 });
-App.StartView = Em.View.extend({
-  templateName: 'start-tpl'
+App.ATeamView = Em.View.extend({
+  templateName: 'select-team-tpl',
+  players: [App.Player.create({handle:'svizzari'}), App.Player.create({handle:'jswsj'}), App.Player.create({handle:'thebean'})]
+});
+App.TeamsView = Em.CollectionView.extend({
+  content: [ App.Team.create(), App.Team.create()]/*,
+  itemViewClass: App.ATeamView.extend()*/
+});
+App.StartView = Em.ContainerView.extend({
+  childViews: ['teamsView', 'actionView'],
+  teamsView: Em.View.extend({
+    template: Em.Handlebars.compile('<div class="row start-game">{{collection App.TeamsView itemViewClass="App.ATeamView"}}</div>')
+  }),
+  actionView: Em.View.extend({
+    layout: Em.Handlebars.compile('<div class="row"><div class="span12">{{yield}}</div></div>'),
+    template: Em.Handlebars.compile('<a {{action startGame}} class="btn btn-large">Lets play! <i class="icon-chevron-right"></i></a>')
+  })
 });
 App.GameView = Em.View.extend({
   templateName: 'game-tpl'
