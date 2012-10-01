@@ -27,7 +27,6 @@ App.Player.reopenClass({
       url: '/players.json',
       context: this
     }).done(this.findComplete);
-    return this.allPlayers;
   }
 });
 
@@ -99,12 +98,11 @@ App.Game.reopenClass({
       type: "POST",
       data: {game: game.getProperties('match_id', 'score1', 'score2')}
     }).done(function(resp) {
-      console.log(resp);
+      // Reset the score properties of the game
       game.setProperties({
         score1: 0,
         score2: 0
       });
-      // TODO: Our game was saved so now we need to generate a new game...2
     });
   }
 });
@@ -193,6 +191,10 @@ App.Router = Em.Router.extend({
     }),
     play: App.BaseRoute.extend({
       route: '/play',
+      enter: function(router) {
+        // Load the player
+        App.Player.find();
+      },
       startGame: function(router) {
         var m = App.Match.create()
         router.get('applicationController')
