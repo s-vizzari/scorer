@@ -17,6 +17,13 @@ describe("A Game", function() {
     expect(game.get('finished')).toBe(false);
   });
 
+  it("should be finished when the score reaches 11", function(){
+    var game = App.Game.create();
+    game.set('score1', 10);
+    game.incrementProperty('score1');
+    expect(game.get('finished')).toBe(true);
+  });
+
   it("should be zero, then increment correctly", function(){
     var game = App.Game.create();
     expect(game.get('score1')).toBe(0);
@@ -43,5 +50,5 @@ describe('A Player', function(){
     var players = App.Player.find();
     expect(players.get('allPlayers').length).toBe(3);
   });
-  
+
 });
