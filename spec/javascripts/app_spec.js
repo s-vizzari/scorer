@@ -1,3 +1,4 @@
+//= require jquery
 //= require app
 
 
@@ -10,26 +11,23 @@ describe("A Game", function() {
 
   it("should not be finished until the score reaches 11", function(){
     var game = App.Game.create();
-    game.incrementProperty('score1');
-    game.incrementProperty('score1');
-    game.incrementProperty('score1');
-    game.incrementProperty('score1');
+    game.incrementProperty('score1', 4);
     expect(game.get('finished')).toBe(false);
   });
 
   it("should be finished when the score reaches 11", function(){
     var game = App.Game.create();
-    game.set('score1', 10);
-    game.incrementProperty('score1');
+    App.get('router')
+      .get('gameController')
+      .set('game', game);
+    game.incrementProperty('score1', 11);
     expect(game.get('finished')).toBe(true);
   });
 
   it("should be zero, then increment correctly", function(){
     var game = App.Game.create();
     expect(game.get('score1')).toBe(0);
-    game.incrementProperty('score1');
-    game.incrementProperty('score1');
-    game.incrementProperty('score1');
+    game.incrementProperty('score1', 3);
     expect(game.get('score1')).toBe(3);
   });
 
@@ -47,8 +45,20 @@ describe('A Match', function(){
 describe('A Player', function(){
 
   it("should fetch a list of players", function(){
-    var players = App.Player.find();
-    expect(players.get('allPlayers').length).toBe(3);
+
+    spyOn(App.Player, 'findComplete').andCallThrough();
+
+    runs(function() {
+      App.Player.find();
+    });
+
+    waits(500);
+
+    runs(function() {
+      expect(App.Player.findComplete).toHaveBeenCalled();
+      // expect(App.Player.get('allPlayers').length).toBe(3);
+    });
+
   });
 
 });

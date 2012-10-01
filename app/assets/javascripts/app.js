@@ -6,21 +6,23 @@ App = Em.Application.create({
 });
 
 /* Models */
-App.Player = Em.Object.extend({
+App.Player = Em.Object.extend();
+App.Player.reopenClass({
   allPlayers: [],
-  find: function(){
+  findComplete: function(resp){
+    resp.forEach(function(player){
+      this.allPlayers.addObject(App.Player.create(player));
+    }, this);
+  },
+  find: function() {
     this.allPlayers = [];
     $.ajax({
       url: '/players.json',
       context: this
-    }).done(function(resp){
-        resp.forEach(function(player){
-          this.allPlayers.addObject(App.Player.create(player));
-        }, this);
-    });
+    }).done(this.findComplete);
     return this.allPlayers;
   }
-})
+});
 
 App.Match = Em.Object.extend({
   games: []
@@ -119,8 +121,8 @@ App.MessageView = Em.View.extend({
 
 App.BaseRoute = Em.Route.extend({
   enter: function(router) {
-    router.get('applicationController')
-      .set('playingGame', false);
+    /*router.get('applicationController')
+      .set('playingGame', false);*/
   },
   exit: function(router) {
     //console.log('Exit route: ' + router.get('currentState.name'));
@@ -189,10 +191,7 @@ App.Router = Em.Router.extend({
 
 App.initialize();
 
-<<<<<<< HEAD:app/assets/javascripts/app.js
-console.log(App.router)
+//console.log(App.router)
 
 //module.exports = App;
-=======
-module.exports = App;
->>>>>>> Added message structure/template.:app/assets/javascripts/app.module.js
+//module.exports = App;
