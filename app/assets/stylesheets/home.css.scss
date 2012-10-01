@@ -3,6 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 @import 'bootstrap';
+@import 'font-awesome';
 @import 'bootstrap-responsive';
 
 body {
@@ -29,6 +30,14 @@ body {
 
 .start-game {
   .team {
+    position: relative;
+    .all-good {
+      color: #ccc;
+      font-size: 36px;
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
     h3 {
       margin-top: 0;
     }
