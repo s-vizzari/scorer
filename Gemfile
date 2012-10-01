@@ -29,7 +29,6 @@ end
 
 group :development, :test do
   gem 'jasminerice'
-  gem 'phantomjs'
   gem 'guard-jasmine'
   gem 'rb-fsevent', '~> 0.9.1'
 end

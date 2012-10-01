@@ -36,12 +36,14 @@ App.Match = Em.Object.extend({
 App.Match.reopenClass({
   finished: function(match) {
     $.ajax({
-      url: '/match/finished',
-      data: match.get('id')
+      url: '/matches/'+match.get('id')+'.json',
+      type: "PUT",
+      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+      data: { match: { finished: true } }
     }).fail(function() {
       console.log('That\'s a fail!');
     }).done(function(resp) {
-
+      console.log('We just finished that game!');
     })
   }
 });
@@ -174,7 +176,7 @@ App.Router = Em.Router.extend({
           .set('playingGame', true);
       },
       finishMatch: function(router, context) {
-        console.log('hi');
+        App.Match.finished(App.Match.create({id: 1}));
       },
       pointWon: function(router, context) {
         var game = router.get('gameController.game');

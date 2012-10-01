@@ -36,8 +36,16 @@ describe("A Game", function() {
 
 describe('A Match', function(){
 
-  it('should exit', function(){
-    expect(true).toBe(true);
+  it('should changed a match to finished', function(){
+
+    spyOn(App.Match, 'finished').andCallThrough();
+
+    var match = App.Match.create({id: 1, player1: 1, player2: 2});
+
+    match.set('finished', true);
+
+    expect(App.Match.finished).toHaveBeenCalled();
+
   });
 
 });
