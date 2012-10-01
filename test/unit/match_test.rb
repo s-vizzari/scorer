@@ -13,4 +13,10 @@ class MatchTest < ActiveSupport::TestCase
     assert match.save
   end
 
+  test "finished should be false by default" do
+    match = Match.new(:player1 => 1, :player2 => 2)
+    match.save
+    assert !match.finished
+  end
+
 end

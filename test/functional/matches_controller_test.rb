@@ -39,6 +39,11 @@ class MatchesControllerTest < ActionController::TestCase
     assert_redirected_to match_path(assigns(:match))
   end
 
+  test "should updated finished attribute of match" do
+    put :update, id: @match, match: { :finished => true }
+    assert_redirected_to match_path(assigns(:match))
+  end
+
   test "should destroy match" do
     assert_difference('Match.count', -1) do
       delete :destroy, id: @match
