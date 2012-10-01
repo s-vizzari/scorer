@@ -1,5 +1,11 @@
 /* Vars */
 
+$.ajaxSetup({
+  beforeSend: function(xhr) {
+    xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+  }
+});
+
 App = Em.Application.create({
   VERSION: '1.0',
   rootElement: '#app'
@@ -30,15 +36,26 @@ App.Team = Em.Object.extend({
 });
 
 App.Match = Em.Object.extend({
-  games: []
+  games: [],
+  player1: 1,
+  player2: 2
 });
 
 App.Match.reopenClass({
+  started: function(match) {
+    $.ajax({
+      url: '/matches.json',
+      type: 'POST',
+      data: { match: match.getProperties('player1', 'player2') }
+    }).done(function(resp) {
+      match.set('id', resp.id);
+      App.router.transitionTo('game');
+    });
+  },
   finished: function(match) {
     $.ajax({
       url: '/matches/'+match.get('id')+'.json',
       type: "PUT",
-      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
       data: { match: { finished: true } }
     }).fail(function() {
       console.log('That\'s a fail!');
@@ -73,7 +90,6 @@ App.Game.reopenClass({
     $.ajax({
       url: '/games.json',
       type: "POST",
-      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
       data: {game: game.getProperties('match_id', 'score1', 'score2')}
     }).done(function(resp) {
       console.log(resp);
@@ -160,7 +176,12 @@ App.Router = Em.Router.extend({
     }),
     play: App.BaseRoute.extend({
       route: '/play',
-      startGame: Em.Route.transitionTo('game'),
+      startGame: function(router) {
+        var m = App.Match.create()
+        router.get('applicationController')
+          .set('match', m);
+        App.Match.started(m);
+      },
       connectOutlets: function(router) {
         console.log(router.get('applicationController'));
         router.get('applicationController')

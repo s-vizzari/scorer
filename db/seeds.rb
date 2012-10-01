@@ -8,7 +8,7 @@
 
 players = Player.create([
   {:id => 1, :first_name => 'Jason', :last_name => 'Smale', :handle => 'jwswj'},
-  {:id => 2, :first_name => 'Stefan', :last_name => 'Vizzari'}
+  {:id => 2, :first_name => 'Stefan', :last_name => 'Vizzari', :handle => 'sv'}
 ])
 matches = Match.create([
   {:id => 1, :player1 => 1, :player2 => 2},
