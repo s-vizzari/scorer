@@ -7,7 +7,6 @@
     <div class="navbar-inner">
       <div class="container">
         <a class="brand" href="#">Scorer</a>
-        <a {{action finishMatch}} class="btn btn-small pull-right finish-match">Finish match <i class="icon-ok-sign"></i></a>
       </div>
     </div>
   </div>
@@ -17,25 +16,37 @@
     </div>
   </div>
 </script>
-
+<i class="icon"></i>
 <script type="text/x-handlebars" data-template-name="select-team-tpl">
   <div class="span6">
-    <div class="team team-1 well">
-      <h3>Team</h3>
+    <div class="team team-{{unbound view.contentIndex}} well">
+
+      <h3>Team {{view.niceIndex}}</h3>
       <ul>
-        {{#each player in players}}
-          <li><a href="#" class="btn">{{player.handle}}</a></li>
+        {{#each view.players}}
+          <li><a {{action togglePlayer}} class="btn" data-player-handle="{{unbound handle}}">{{handle}}</a></li>
         {{/each}}
       </ul>
     </div>
   </div>
 </script>
-
 <script type="text/x-handlebars" data-template-name="game-tpl">
-  <ul class="game">
-    <li><a {{action pointWon}} class="score-1">{{controller.game.score1}}</a></li>
-    <li><a {{action pointWon}} class="score-2">{{controller.game.score2}}</a></li>
-  </ul>
+  <div class="row">
+    <div class="span12">
+      <div class="well">
+        <a {{action finishMatch}} class="btn btn-large finish-match">Finish match <i class="icon-chevron-right"></i></a>
+      </div>
+    </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <ul class="game">
+          <li><a {{action pointWon}} class="score-1">{{controller.game.score1}}</a></li>
+          <li><a {{action pointWon}} class="score-2">{{controller.game.score2}}</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-handlebars" data-template-name="game-results-tpl">

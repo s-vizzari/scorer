@@ -32,7 +32,13 @@ App.Player.reopenClass({
 });
 
 App.Team = Em.Object.extend({
-  players: []
+  players: [],
+  full: function() {
+    return players.length === 2;
+  }.property('players'),
+  ok: function() {
+    return players.length >= 1;
+  }.property('players')
 });
 
 App.Match = Em.Object.extend({
@@ -61,6 +67,7 @@ App.Match.reopenClass({
       console.log('That\'s a fail!');
     }).done(function(resp) {
       console.log('We just finished that game!');
+      App.router.transitionTo('play');
     })
   }
 });
@@ -93,7 +100,11 @@ App.Game.reopenClass({
       data: {game: game.getProperties('match_id', 'score1', 'score2')}
     }).done(function(resp) {
       console.log(resp);
-      // TODO: Our game was saved so now we need to generate a new game...
+      game.setProperties({
+        score1: 0,
+        score2: 0
+      });
+      // TODO: Our game was saved so now we need to generate a new game...2
     });
   }
 });
@@ -123,11 +134,17 @@ App.ApplicationView = Em.View.extend({
 });
 App.ATeamView = Em.View.extend({
   templateName: 'select-team-tpl',
-  players: [App.Player.create({handle:'svizzari'}), App.Player.create({handle:'jswsj'}), App.Player.create({handle:'thebean'})]
+  niceIndex: function() {
+    return this.get('contentIndex') + 1;
+  }.property('contentIndex'),
+  players: [
+    App.Player.create({handle:'svizzari'}),
+    App.Player.create({handle:'jswsj'}),
+    App.Player.create({handle:'thebean'})
+  ]
 });
 App.TeamsView = Em.CollectionView.extend({
-  content: [ App.Team.create(), App.Team.create()]/*,
-  itemViewClass: App.ATeamView.extend()*/
+  content: [App.Team.create(), App.Team.create()]
 });
 App.StartView = Em.ContainerView.extend({
   childViews: ['teamsView', 'actionView'],
@@ -182,6 +199,14 @@ App.Router = Em.Router.extend({
           .set('match', m);
         App.Match.started(m);
       },
+      togglePlayer: function(router, context) {
+        var $playerBtn = $(context.target);
+        if ($playerBtn.is('.disabled')) return;
+        $('[data-player-handle="'+$playerBtn.data('playerHandle')+'"]').not($playerBtn).each(function(i, el) {
+          $(el).toggleClass('disabled');
+        });
+        $playerBtn.toggleClass('btn-inverse');
+      },
       connectOutlets: function(router) {
         console.log(router.get('applicationController'));
         router.get('applicationController')
@@ -192,12 +217,14 @@ App.Router = Em.Router.extend({
       route: '/game',
       enter: function(router, context) {
         router.get('gameController')
-          .set('game', App.Game.create());
+          .set('game', App.Game.create({
+            match_id: router.get('applicationController.match.id')
+          }));
         router.get('applicationController')
           .set('playingGame', true);
       },
       finishMatch: function(router, context) {
-        App.Match.finished(App.Match.create({id: 1}));
+        App.Match.finished(router.get('applicationController.match'));
       },
       pointWon: function(router, context) {
         var game = router.get('gameController.game');
