@@ -1,5 +1,4 @@
 # Scorer
----
 Table Tennis scoring application
 
 ## Improvements
