@@ -31,12 +31,15 @@ body {
 .start-game {
   .team {
     position: relative;
-    .all-good {
-      color: #ccc;
-      font-size: 36px;
+    .icon-ok-sign {
+      color: #ddd;
+      font-size: 29px;
       position: absolute;
       right: 10px;
       top: 10px;
+      &.all-good {
+        color: green;
+      }
     }
     h3 {
       margin-top: 0;

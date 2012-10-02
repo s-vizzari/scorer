@@ -20,11 +20,11 @@
 <script type="text/x-handlebars" data-template-name="select-team-tpl">
   <div class="span6">
     <div class="team team-{{unbound view.contentIndex}} well">
-      <i class="icon-ok-circle all-good"></i>
+      <i class="icon-ok-sign"></i>
       <h3>Team {{view.niceIndex}}</h3>
       <ul>
-        {{#each view.players}}
-          <li><a {{action togglePlayer}} class="btn" data-player-handle="{{unbound handle}}">{{handle}}</a></li>
+        {{#each p in view.players}}
+          <li><a {{action togglePlayer p}} class="btn" data-team="team-{{unbound view.niceIndex}}" data-player-handle="{{unbound p.handle}}">{{p.fullName}}</a></li>
         {{/each}}
       </ul>
     </div>

@@ -13,20 +13,26 @@ App = Em.Application.create({
 
 /* Models */
 
-App.Player = Em.Object.extend();
+App.Player = Em.Object.extend({
+  fullName: function() {
+    return this.get('first_name') + ' ' +  this.get('last_name');
+  }.property('first_name', 'last_name')
+});
 App.Player.reopenClass({
   allPlayers: [],
   findComplete: function(resp){
+    // this.allPlayers = [];
     resp.forEach(function(player){
       this.allPlayers.addObject(App.Player.create(player));
     }, this);
   },
   find: function() {
-    this.allPlayers = [];
+    console.log('blah');
     $.ajax({
       url: '/players.json',
       context: this
     }).done(this.findComplete);
+    return this.allPlayers;
   }
 });
 
@@ -123,23 +129,14 @@ App.ApplicationView = Em.View.extend({
   templateName: 'app-tpl',
   classNames: ['app-view'],
   classNameBindings: ['controller.playingGame:playing'],
-  playingGame: false,
-  eventManager: Em.Object.create({
-    finishMatch: function(evt, view) {
-      console.log('Yay!');
-    }
-  })
+  playingGame: false
 });
 App.ATeamView = Em.View.extend({
   templateName: 'select-team-tpl',
   niceIndex: function() {
     return this.get('contentIndex') + 1;
   }.property('contentIndex'),
-  players: [
-    App.Player.create({handle:'svizzari'}),
-    App.Player.create({handle:'jswsj'}),
-    App.Player.create({handle:'thebean'})
-  ]
+  players: App.Player.find()
 });
 App.TeamsView = Em.CollectionView.extend({
   content: [App.Team.create(), App.Team.create()]
@@ -192,18 +189,27 @@ App.Router = Em.Router.extend({
     play: App.BaseRoute.extend({
       route: '/play',
       enter: function(router) {
-        // Load the player
-        App.Player.find();
+        router.get('applicationController').set('match', App.Match.create());
       },
       startGame: function(router) {
-        var m = App.Match.create()
-        router.get('applicationController')
-          .set('match', m);
-        App.Match.started(m);
+        App.Match.started(router.get('applicationController.match'));
       },
       togglePlayer: function(router, context) {
         var $playerBtn = $(context.target);
+        var m = router.get('applicationController.match');
+        if ($playerBtn.is('[data-team="team-1"]'))
+        {
+          m.set('player1', context.context.get('id'));
+        }
+        else
+        {
+          m.set('player2', context.context.get('id'));
+        }
         if ($playerBtn.is('.disabled')) return;
+        $playerBtn.closest('ul').find('.btn').removeClass('btn-primary').each(function(i, el) {
+          var $el = $(el);
+          $('[data-player-handle="'+$el.data('playerHandle')+'"]').not($el).removeClass('disabled');
+        });
         $('[data-player-handle="'+$playerBtn.data('playerHandle')+'"]').not($playerBtn).each(function(i, el) {
           $(el).toggleClass('disabled');
         });

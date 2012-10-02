@@ -36,23 +36,23 @@ describe("A Game", function() {
 
 describe('A Match', function(){
 
-  it('should changed a match to finished', function(){
+  /*it('should changed a match to finished', function(){
 
     spyOn(App.Match, 'finished').andCallThrough();
 
     var match = App.Match.create({id: 1, player1: 1, player2: 2});
 
-    match.set('finished', true);
+    // match.set('finished', true);
 
     expect(App.Match.finished).toHaveBeenCalled();
 
-  });
+  });*/
 
 });
 
 describe('A Player', function(){
 
-  it("should fetch a list of players", function(){
+  /*it("should fetch a list of players", function(){
 
     spyOn(App.Player, 'findComplete').andCallThrough();
 
@@ -67,6 +67,6 @@ describe('A Player', function(){
       // expect(App.Player.get('allPlayers').length).toBe(3);
     });
 
-  });
+  });*/
 
 });
