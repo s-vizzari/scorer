@@ -81,10 +81,10 @@ App.Match.reopenClass({
 });
 
 App.Game = Em.Object.extend({
-  match_id: 1,
+  match_id: 0,
   score1: 0,
   score2: 0,
-  maxScore: 11,
+  maxScore: 21,
   finished: function() {
     return (this.get('score1') === this.get('maxScore') ||
       this.get('score2') === this.get('maxScore'));
@@ -136,6 +136,10 @@ App.ApplicationView = Em.View.extend({
 });
 App.ATeamView = Em.View.extend({
   templateName: 'select-team-tpl',
+  notReadyBinding: 'App.router.applicationController.match.notReady',
+  notReadyChanged: function() {
+    console.log('changed!');
+  }.observes('notReady'),
   niceIndex: function() {
     return this.get('contentIndex') + 1;
   }.property('contentIndex'),
@@ -157,7 +161,6 @@ App.StartView = Em.ContainerView.extend({
     //classNameBindings: ['App.router.applicationController.match.full:disabled'],
     eventManager: Em.Object.create({
       click: function(evt, view) {
-        console.log('click')
         if ($(evt.target).is('.btn') &&
           $(evt.target).not('.disabled'))
         {
@@ -233,6 +236,7 @@ App.Router = Em.Router.extend({
           $(el).toggleClass('disabled');
         });
         $playerBtn.toggleClass('btn-primary');
+        $playerBtn.closest('.well').find('.icon-ok-sign').addClass('all-good');
       },
       connectOutlets: function(router) {
         console.log(router.get('applicationController'));
