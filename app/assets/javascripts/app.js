@@ -48,8 +48,11 @@ App.Team = Em.Object.extend({
 
 App.Match = Em.Object.extend({
   games: [],
-  player1: 1,
-  player2: 2
+  player1: null,
+  player2: null,
+  notReady: function() {
+    return this.get('player1') === null || this.get('player2') === null;
+  }.property('player1', 'player2')
 });
 
 App.Match.reopenClass({
@@ -147,8 +150,24 @@ App.StartView = Em.ContainerView.extend({
     template: Em.Handlebars.compile('<div class="row start-game">{{collection App.TeamsView itemViewClass="App.ATeamView"}}</div>')
   }),
   actionView: Em.View.extend({
+    /*fullBinding: 'App.router.applicationController.match.full',
+    fullChanged: function() {
+      console.log('full: ' + this.get('full'));
+    }.observes('full'),*/
+    //classNameBindings: ['App.router.applicationController.match.full:disabled'],
+    eventManager: Em.Object.create({
+      click: function(evt, view) {
+        console.log('click')
+        if ($(evt.target).is('.btn') &&
+          $(evt.target).not('.disabled'))
+        {
+          App.Match.started(App.router.get('applicationController.match'));
+        }
+      }
+    }),
     layout: Em.Handlebars.compile('<div class="row"><div class="span12">{{yield}}</div></div>'),
-    template: Em.Handlebars.compile('<a {{action startGame}} class="btn btn-large">Lets play! <i class="icon-chevron-right"></i></a>')
+    template: Em.Handlebars.compile('{{#view classNameBindings="App.router.applicationController.match.notReady:disabled" tagName="a" classNames="btn btn-large"}}Lets play! <i class="icon-chevron-right"></i>{{/view}}')
+    //<a {{action startGame}} class="btn btn-large"></a>
   })
 });
 App.GameView = Em.View.extend({
@@ -191,9 +210,9 @@ App.Router = Em.Router.extend({
       enter: function(router) {
         router.get('applicationController').set('match', App.Match.create());
       },
-      startGame: function(router) {
+      /*startGame: function(router) {
         App.Match.started(router.get('applicationController.match'));
-      },
+      },*/
       togglePlayer: function(router, context) {
         var $playerBtn = $(context.target);
         var m = router.get('applicationController.match');
