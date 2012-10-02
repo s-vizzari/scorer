@@ -9,7 +9,13 @@
 body {
   background: #eee;
   position: relative;
-  padding: 60px 0 40px;
+  padding-top: 60px;
+}
+
+@media all and (max-width: 979px) {
+  body {
+    padding-top: 0;
+  }
 }
 
 .app-view {
@@ -50,6 +56,7 @@ body {
       padding: 0;
       li {
         display: inline-block;
+        margin-bottom: 5px;
       }
     }
   }
