@@ -160,6 +160,32 @@ App.ATeamView = Em.View.extend({
     return this.get('contentIndex') + 1;
   }.property('contentIndex'),
 
+  togglePlayer: function(context) {
+    var $playerBtn = $(context.target);
+    var m = App.router.get('applicationController.match');
+
+    if ($playerBtn.is('[data-team="team-1"]')) {
+      m.set('player1', context.context.get('id'));
+    }
+    else {
+      m.set('player2', context.context.get('id'));
+    }
+
+    if ($playerBtn.is('.disabled')) return;
+
+    $playerBtn.closest('ul').find('.btn').removeClass('btn-primary').each(function(i, el) {
+      var $el = $(el);
+      $('[data-player-handle="'+$el.data('playerHandle')+'"]').not($el).removeClass('disabled');
+    });
+
+    $('[data-player-handle="'+$playerBtn.data('playerHandle')+'"]').not($playerBtn).each(function(i, el) {
+      $(el).toggleClass('disabled');
+    });
+    
+    $playerBtn.toggleClass('btn-primary');
+    $playerBtn.closest('.well').find('.icon-ok-sign').addClass('all-good');
+  },
+
   players: App.Player.find()
 });
 
@@ -234,33 +260,6 @@ App.Router = Em.Router.extend({
         router.get('applicationController').set('match', App.Match.create());
       },
 
-      startGame: function(router) {
-        App.Match.started(router.get('applicationController.match'));
-      },
-
-      togglePlayer: function(router, context) {
-        var $playerBtn = $(context.target);
-        var m = router.get('applicationController.match');
-        if ($playerBtn.is('[data-team="team-1"]'))
-        {
-          m.set('player1', context.context.get('id'));
-        }
-        else
-        {
-          m.set('player2', context.context.get('id'));
-        }
-        if ($playerBtn.is('.disabled')) return;
-        $playerBtn.closest('ul').find('.btn').removeClass('btn-primary').each(function(i, el) {
-          var $el = $(el);
-          $('[data-player-handle="'+$el.data('playerHandle')+'"]').not($el).removeClass('disabled');
-        });
-        $('[data-player-handle="'+$playerBtn.data('playerHandle')+'"]').not($playerBtn).each(function(i, el) {
-          $(el).toggleClass('disabled');
-        });
-        $playerBtn.toggleClass('btn-primary');
-        $playerBtn.closest('.well').find('.icon-ok-sign').addClass('all-good');
-      },
-
       connectOutlets: function(router) {
         router.get('applicationController')
           .connectOutlet('start');
@@ -271,12 +270,11 @@ App.Router = Em.Router.extend({
       route: '/game',
 
       enter: function(router, context) {
-        router.get('gameController')
-          .set('game', App.Game.create({
-            match_id: router.get('applicationController.match.id')
-          }));
-        router.get('applicationController')
-          .set('playingGame', true);
+        router.get('gameController').set('game', App.Game.create({
+          match_id: router.get('applicationController.match.id')
+        }));
+
+        router.get('applicationController').set('playingGame', true);
       },
 
       finishMatch: function(router, context) {
@@ -285,35 +283,33 @@ App.Router = Em.Router.extend({
 
       pointWon: function(router, context) {
         var game = router.get('gameController.game');
-        if ($(context.target).is('.score-1'))
-        {
+
+        if ($(context.target).is('.score-1')) {
           game.incrementProperty('score1');
         }
-        else
-        {
+        else {
           game.incrementProperty('score2');
         }
       },
 
       connectOutlets: function(router) {
-        router.get('applicationController')
-          .connectOutlet('game');
+        router.get('applicationController').connectOutlet('game');
       }
     }),
 
     results: App.BaseRoute.extend({
       route: '/result/all',
+
       connectOutlets: function(router) {
-        router.get('applicationController')
-          .connectOutlet('results');
+        router.get('applicationController').connectOutlet('results');
       }
     }),
 
     leaders: App.BaseRoute.extend({
       route: '/leaders',
+
       connectOutlets: function(router) {
-        router.get('applicationController')
-          .connectOutlet('leaders');
+        router.get('applicationController').connectOutlet('leaders');
       }
     })
   })

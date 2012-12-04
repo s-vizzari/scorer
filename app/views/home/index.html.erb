@@ -28,7 +28,7 @@
       <h3>Team {{view.niceIndex}}</h3>
       <ul>
         {{#each p in view.players}}
-          <li><a {{action togglePlayer p}} class="btn" data-team="team-{{unbound view.niceIndex}}" data-player-handle="{{unbound p.handle}}">{{p.fullName}}</a></li>
+          <li><a {{action togglePlayer p target="view"}} class="btn" data-team="team-{{unbound view.niceIndex}}" data-player-handle="{{unbound p.handle}}">{{p.fullName}}</a></li>
         {{/each}}
       </ul>
     </div>
