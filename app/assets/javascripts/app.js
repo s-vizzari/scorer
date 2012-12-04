@@ -18,29 +18,33 @@ App.Player = Em.Object.extend({
     return this.get('first_name') + ' ' +  this.get('last_name');
   }.property('first_name', 'last_name')
 });
+
 App.Player.reopenClass({
   allPlayers: [],
+
   findComplete: function(resp){
-    // this.allPlayers = [];
     resp.forEach(function(player){
       this.allPlayers.addObject(App.Player.create(player));
     }, this);
   },
+
   find: function() {
-    console.log('blah');
     $.ajax({
       url: '/players.json',
       context: this
     }).done(this.findComplete);
+
     return this.allPlayers;
   }
 });
 
 App.Team = Em.Object.extend({
   players: [],
+
   full: function() {
     return players.length === 2;
   }.property('players'),
+
   ok: function() {
     return players.length >= 1;
   }.property('players')
@@ -50,12 +54,14 @@ App.Match = Em.Object.extend({
   games: [],
   player1: null,
   player2: null,
+
   notReady: function() {
     return this.get('player1') === null || this.get('player2') === null;
   }.property('player1', 'player2')
 });
 
 App.Match.reopenClass({
+
   started: function(match) {
     $.ajax({
       url: '/matches.json',
@@ -66,6 +72,7 @@ App.Match.reopenClass({
       App.router.transitionTo('game');
     });
   },
+
   finished: function(match) {
     $.ajax({
       url: '/matches/'+match.get('id')+'.json',
@@ -78,6 +85,7 @@ App.Match.reopenClass({
       App.router.transitionTo('play');
     })
   }
+
 });
 
 App.Game = Em.Object.extend({
@@ -85,19 +93,20 @@ App.Game = Em.Object.extend({
   score1: 0,
   score2: 0,
   maxScore: 21,
+
   finished: function() {
     return (this.get('score1') === this.get('maxScore') ||
       this.get('score2') === this.get('maxScore'));
   }.property('score1',
     'score2',
     'maxScore'),
+
   scoreChanged: function() {
     if (this.get('finished') === true)
     {
       App.Game.save(App.get('router.gameController.game'));
     }
-  }.observes('score1',
-    'score2')
+  }.observes('score1', 'score2')
 });
 
 App.Game.reopenClass({
@@ -130,61 +139,68 @@ App.MessageController = Em.Controller.extend();
 
 App.ApplicationView = Em.View.extend({
   templateName: 'app-tpl',
+
   classNames: ['app-view'],
+
   classNameBindings: ['controller.playingGame:playing'],
+
   playingGame: false
 });
+
 App.ATeamView = Em.View.extend({
   templateName: 'select-team-tpl',
+
   notReadyBinding: 'App.router.applicationController.match.notReady',
+
   notReadyChanged: function() {
     console.log('changed!');
   }.observes('notReady'),
+
   niceIndex: function() {
     return this.get('contentIndex') + 1;
   }.property('contentIndex'),
+
   players: App.Player.find()
 });
+
 App.TeamsView = Em.CollectionView.extend({
   content: [App.Team.create(), App.Team.create()]
 });
-App.StartView = Em.ContainerView.extend({
-  childViews: ['teamsView', 'actionView'],
-  teamsView: Em.View.extend({
-    template: Em.Handlebars.compile('<div class="row start-game">{{collection App.TeamsView itemViewClass="App.ATeamView"}}</div>')
-  }),
+
+App.StartView = Em.View.extend({
+  templateName: 'start-tpl',
+
   actionView: Em.View.extend({
-    /*fullBinding: 'App.router.applicationController.match.full',
-    fullChanged: function() {
-      console.log('full: ' + this.get('full'));
-    }.observes('full'),*/
-    //classNameBindings: ['App.router.applicationController.match.full:disabled'],
-    eventManager: Em.Object.create({
-      click: function(evt, view) {
-        if ($(evt.target).is('.btn') &&
-          $(evt.target).not('.disabled'))
-        {
-          App.Match.started(App.router.get('applicationController.match'));
-        }
+    classNameBindings: "App.router.applicationController.match.notReady:disabled",
+
+    tagName: "a",
+
+    classNames: "btn btn-large",
+
+    click: function(evt, view) {
+      if ($(evt.target).is('.btn') && $(evt.target).not('.disabled')) {
+        App.Match.started(App.router.get('applicationController.match'));
       }
-    }),
-    layout: Em.Handlebars.compile('<div class="row"><div class="span12">{{yield}}</div></div>'),
-    template: Em.Handlebars.compile('{{#view classNameBindings="App.router.applicationController.match.notReady:disabled" tagName="a" classNames="btn btn-large"}}Lets play! <i class="icon-chevron-right"></i>{{/view}}')
-    //<a {{action startGame}} class="btn btn-large"></a>
+    }
   })
 });
+
 App.GameView = Em.View.extend({
   templateName: 'game-tpl'
 });
+
 App.GameResultView = Em.View.extend({
   templateName: 'game-result-tpl'
 });
+
 App.ResultsView = Em.View.extend({
   templateName: 'results-tpl'
 });
+
 App.LeadersView = Em.View.extend({
   templateName: 'leaders-tpl'
 });
+
 App.MessageView = Em.View.extend({
   templateName: 'message-tpl'
 });
@@ -203,19 +219,25 @@ App.BaseRoute = Em.Route.extend({
 
 App.Router = Em.Router.extend({
   enableLogging: true,
+
   root: App.BaseRoute.extend({
+
     index: App.BaseRoute.extend({
       route: '/',
       redirectsTo: 'play'
     }),
+
     play: App.BaseRoute.extend({
       route: '/play',
+
       enter: function(router) {
         router.get('applicationController').set('match', App.Match.create());
       },
-      /*startGame: function(router) {
+
+      startGame: function(router) {
         App.Match.started(router.get('applicationController.match'));
-      },*/
+      },
+
       togglePlayer: function(router, context) {
         var $playerBtn = $(context.target);
         var m = router.get('applicationController.match');
@@ -238,14 +260,16 @@ App.Router = Em.Router.extend({
         $playerBtn.toggleClass('btn-primary');
         $playerBtn.closest('.well').find('.icon-ok-sign').addClass('all-good');
       },
+
       connectOutlets: function(router) {
-        console.log(router.get('applicationController'));
         router.get('applicationController')
           .connectOutlet('start');
       }
     }),
+
     game: App.BaseRoute.extend({
       route: '/game',
+
       enter: function(router, context) {
         router.get('gameController')
           .set('game', App.Game.create({
@@ -254,9 +278,11 @@ App.Router = Em.Router.extend({
         router.get('applicationController')
           .set('playingGame', true);
       },
+
       finishMatch: function(router, context) {
         App.Match.finished(router.get('applicationController.match'));
       },
+
       pointWon: function(router, context) {
         var game = router.get('gameController.game');
         if ($(context.target).is('.score-1'))
@@ -268,11 +294,13 @@ App.Router = Em.Router.extend({
           game.incrementProperty('score2');
         }
       },
+
       connectOutlets: function(router) {
         router.get('applicationController')
           .connectOutlet('game');
       }
     }),
+
     results: App.BaseRoute.extend({
       route: '/result/all',
       connectOutlets: function(router) {
@@ -280,6 +308,7 @@ App.Router = Em.Router.extend({
           .connectOutlet('results');
       }
     }),
+
     leaders: App.BaseRoute.extend({
       route: '/leaders',
       connectOutlets: function(router) {
@@ -291,8 +320,3 @@ App.Router = Em.Router.extend({
 });
 
 App.initialize();
-
-//console.log(App.router)
-
-//module.exports = App;
-//module.exports = App;
