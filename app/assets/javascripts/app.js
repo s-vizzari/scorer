@@ -61,16 +61,15 @@ App.Match = Em.Object.extend({
 });
 
 App.Match.reopenClass({
-
   started: function(match) {
     $.ajax({
       url: '/matches.json',
       type: 'POST',
       data: {
         match: {
-            player1: match.get('player1').id,
-            player2: match.get('player2').id
-          } 
+          player1: match.get('player1').id,
+          player2: match.get('player2').id
+        } 
       }
     }).done(function(resp) {
       match.set('id', resp.id);
@@ -94,11 +93,12 @@ App.Match.reopenClass({
 });
 
 App.Game = Em.Object.extend({
-  match_id: 0,
+  match: null,
   score1: 0,
   score2: 0,
   maxScore: 21,
   totalScore: 0,
+  createdAt: '',
 
   finished: function() {
     return (this.get('score1') === this.get('maxScore') ||
@@ -110,7 +110,7 @@ App.Game = Em.Object.extend({
   scoreChanged: function() {
     if (this.get('finished') === true)
     {
-      App.Game.save(App.get('router.gameController.game'));
+      this.save();
     }
   }.observes('score1', 'score2'),
 
@@ -129,6 +129,28 @@ App.Game = Em.Object.extend({
     }
   },
 
+  save: function() {
+    $.ajax({
+      url: '/games.json',
+      type: "POST",
+      context: this,
+      data: {
+        game: {
+          match_id: this.get('match').id,
+          score1: this.get('score1'),
+          score2: this.get('score2')
+        }
+      }
+    }).done(function(resp) {
+      // Reset the score properties of the game
+      this.setProperties({
+        totalScore: 0,
+        score1: 0,
+        score2: 0
+      });
+    });
+  },
+
   switchServer: function() {
     if ($('.score-1').is('.serving')) {
       $('.score-1').removeClass('serving');
@@ -141,19 +163,29 @@ App.Game = Em.Object.extend({
 });
 
 App.Game.reopenClass({
-  save: function(game) {
-    $.ajax({
-      url: '/games.json',
-      type: "POST",
-      data: {game: game.getProperties('match_id', 'score1', 'score2')}
-    }).done(function(resp) {
-      // Reset the score properties of the game
-      game.setProperties({
-        totalScore: 0,
-        score1: 0,
-        score2: 0
+  findAll: function() {
+    var games = [];
+
+    $.getJSON('/games.json', function(data) {
+      $.each(data, function(i, value) {
+        console.log(value);
+
+        var game = App.Game.create({
+          match: App.Match.create({
+            player1: App.Player.create(value.match.p1),
+            player2: App.Player.create(value.match.p2),
+          }),
+          score1: value.score1,
+          score2: value.score2,
+          createdAt: value.created_at
+        });
+
+        console.log(game);
+        games.addObject(game);
       });
     });
+
+    return games;
   }
 });
 
@@ -163,7 +195,7 @@ App.ApplicationController = Em.Controller.extend();
 App.StartController = Em.Controller.extend();
 App.GameController = Em.Controller.extend();
 App.GameResultController = Em.Controller.extend();
-App.ResultsController = Em.Controller.extend();
+App.ResultsController = Em.ArrayController.extend();
 App.LeadersController = Em.Controller.extend();
 App.MessageController = Em.Controller.extend();
 
@@ -290,6 +322,8 @@ App.Router = Em.Router.extend({
         router.get('applicationController').set('match', App.Match.create());
       },
 
+      results: Ember.Route.transitionTo('results'),
+
       connectOutlets: function(router) {
         router.get('applicationController').connectOutlet('start');
       }
@@ -300,7 +334,7 @@ App.Router = Em.Router.extend({
 
       enter: function(router, context) {
         router.get('gameController').set('game', App.Game.create({
-          match_id: router.get('applicationController.match.id')
+          match: router.get('applicationController.match')
         }));
 
         router.get('gameController').set('match', router.get('applicationController.match'));
@@ -318,10 +352,12 @@ App.Router = Em.Router.extend({
     }),
 
     results: App.BaseRoute.extend({
-      route: '/result/all',
+      route: '/results',
+
+      back: Ember.Route.transitionTo('play'),
 
       connectOutlets: function(router) {
-        router.get('applicationController').connectOutlet('results');
+        router.get('applicationController').connectOutlet('results', App.Game.findAll());
       }
     }),
 

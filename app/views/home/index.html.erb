@@ -13,6 +13,7 @@
       <div class="row start-game">
         {{collection App.TeamsView itemViewClass="App.ATeamView"}}
       </div>
+        <a href="#" class="btn btn-large" {{action results}}>Results</a>
         {{#view view.actionView}}Lets play! <i class="icon-chevron-right"></i>{{/view}}
     </div>
   </div>
@@ -56,7 +57,33 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="results-tpl">
-  
+  <h1>Results</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Player 1</th>
+        <th>Score</th>
+        <th>Score</th>
+        <th>Player 2</th>
+        <th>Date/Time</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      {{#each game in controller}}
+          <tr class="result">
+            <td>{{game.match.player1.fullName}}</td>
+            <td>{{game.score1}}</td>
+            <td>{{game.score2}}</td>
+            <td>{{game.match.player2.fullName}}</td>
+            <td>{{game.createdAt}}</td>
+          </tr>
+      {{/each}}
+
+    </tbody>
+  </table>
+
+  <a href="#" class="btn btn-large" {{action back}}>Back</a>
 </script>
 
 <script type="text/x-handlebars" data-template-name="leaders-tpl">
