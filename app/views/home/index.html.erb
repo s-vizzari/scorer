@@ -1,10 +1,6 @@
 
 <script type="text/x-handlebars" data-template-name="app-tpl">
-  <div class="row">
-    <div class="span12">
-      {{outlet}}
-    </div>
-  </div>
+  {{outlet}}
 </script>
 
 <script type="text/x-handlebars" data-template-name="start-tpl">
@@ -57,33 +53,37 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="results-tpl">
-  <h1>Results</h1>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Player 1</th>
-        <th>Score</th>
-        <th>Score</th>
-        <th>Player 2</th>
-        <th>Date/Time</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      {{#each game in controller}}
-          <tr class="result">
-            <td>{{game.match.player1.fullName}}</td>
-            <td>{{game.score1}}</td>
-            <td>{{game.score2}}</td>
-            <td>{{game.match.player2.fullName}}</td>
-            <td>{{game.createdAt}}</td>
+  <div class="row">
+    <div class="span12">
+      <h1>Results</h1>
+      <table class="table table-striped well">
+        <thead>
+          <tr>
+            <th>Player 1</th>
+            <th>Score</th>
+            <th>Score</th>
+            <th>Player 2</th>
+            <th>Date/Time</th>
           </tr>
-      {{/each}}
+        </thead>
+        <tbody>
 
-    </tbody>
-  </table>
+          {{#each game in controller}}
+              <tr class="result">
+                <td>{{game.match.player1.fullName}}</td>
+                <td>{{game.score1}}</td>
+                <td>{{game.score2}}</td>
+                <td>{{game.match.player2.fullName}}</td>
+                <td>{{game.createdAt}}</td>
+              </tr>
+          {{/each}}
 
-  <a href="#" class="btn btn-large" {{action back}}>Back</a>
+        </tbody>
+      </table>
+
+      <a href="#" class="btn btn-large" {{action back}}>Back</a>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-handlebars" data-template-name="leaders-tpl">
