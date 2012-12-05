@@ -101,8 +101,8 @@ App.Game = Em.Object.extend({
   createdAt: '',
 
   finished: function() {
-    return (this.get('score1') === this.get('maxScore') ||
-      this.get('score2') === this.get('maxScore'));
+    return ((this.get('score1') >= this.get('maxScore') || this.get('score2') >= this.get('maxScore')) 
+      && Math.abs(this.get('score1') - this.get('score2')) > 1);
   }.property('score1',
     'score2',
     'maxScore'),
@@ -110,6 +110,7 @@ App.Game = Em.Object.extend({
   scoreChanged: function() {
     if (this.get('finished') === true)
     {
+      this.switchServer();
       this.save();
     }
   }.observes('score1', 'score2'),
