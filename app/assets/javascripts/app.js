@@ -66,7 +66,12 @@ App.Match.reopenClass({
     $.ajax({
       url: '/matches.json',
       type: 'POST',
-      data: { match: match.getProperties('player1', 'player2') }
+      data: {
+        match: {
+            player1: match.get('player1').id,
+            player2: match.get('player2').id
+          } 
+      }
     }).done(function(resp) {
       match.set('id', resp.id);
       App.router.transitionTo('game');
@@ -89,7 +94,7 @@ App.Match.reopenClass({
 });
 
 App.Game = Em.Object.extend({
-  match_id: 0,
+  match: 0,
   score1: 0,
   score2: 0,
   maxScore: 21,
@@ -165,11 +170,13 @@ App.ATeamView = Em.View.extend({
     var m = App.router.get('applicationController.match');
 
     if ($playerBtn.is('[data-team="team-1"]')) {
-      m.set('player1', context.context.get('id'));
+      m.set('player1', context.context);
     }
     else {
-      m.set('player2', context.context.get('id'));
+      m.set('player2', context.context);
     }
+
+    console.log(context.context)
 
     if ($playerBtn.is('.disabled')) return;
 
@@ -181,7 +188,7 @@ App.ATeamView = Em.View.extend({
     $('[data-player-handle="'+$playerBtn.data('playerHandle')+'"]').not($playerBtn).each(function(i, el) {
       $(el).toggleClass('disabled');
     });
-    
+
     $playerBtn.toggleClass('btn-primary');
     $playerBtn.closest('.well').find('.icon-ok-sign').addClass('all-good');
   },
@@ -234,13 +241,9 @@ App.MessageView = Em.View.extend({
 /* Routes */
 
 App.BaseRoute = Em.Route.extend({
-  enter: function(router) {
-    /*router.get('applicationController')
-      .set('playingGame', false);*/
-  },
-  exit: function(router) {
-    //console.log('Exit route: ' + router.get('currentState.name'));
-  }
+  enter: function(router) {},
+
+  exit: function(router) {}
 });
 
 App.Router = Em.Router.extend({
@@ -261,8 +264,7 @@ App.Router = Em.Router.extend({
       },
 
       connectOutlets: function(router) {
-        router.get('applicationController')
-          .connectOutlet('start');
+        router.get('applicationController').connectOutlet('start');
       }
     }),
 
@@ -273,6 +275,8 @@ App.Router = Em.Router.extend({
         router.get('gameController').set('game', App.Game.create({
           match_id: router.get('applicationController.match.id')
         }));
+
+        router.get('gameController').set('match', router.get('applicationController.match'));
 
         router.get('applicationController').set('playingGame', true);
       },
