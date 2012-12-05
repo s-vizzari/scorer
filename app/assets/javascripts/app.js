@@ -98,6 +98,7 @@ App.Game = Em.Object.extend({
   score1: 0,
   score2: 0,
   maxScore: 21,
+  totalScore: 0,
 
   finished: function() {
     return (this.get('score1') === this.get('maxScore') ||
@@ -114,11 +115,27 @@ App.Game = Em.Object.extend({
   }.observes('score1', 'score2'),
 
   pointWon: function(event) {
+    this.incrementProperty('totalScore');
+
+    if (this.get('totalScore') % 5 === 0) {
+      this.switchServer();
+    }
+
     if ($(event.target).is('.score-1')) {
       this.incrementProperty('score1');
     }
     else {
       this.incrementProperty('score2');
+    }
+  },
+
+  switchServer: function() {
+    if ($('.score-1').is('.serving')) {
+      $('.score-1').removeClass('serving');
+      $('.score-2').addClass('serving');
+    } else {
+      $('.score-2').removeClass('serving');
+      $('.score-1').addClass('serving');
     }
   }
 });
@@ -132,6 +149,7 @@ App.Game.reopenClass({
     }).done(function(resp) {
       // Reset the score properties of the game
       game.setProperties({
+        totalScore: 0,
         score1: 0,
         score2: 0
       });
