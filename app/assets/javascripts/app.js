@@ -94,7 +94,7 @@ App.Match.reopenClass({
 });
 
 App.Game = Em.Object.extend({
-  match: 0,
+  match_id: 0,
   score1: 0,
   score2: 0,
   maxScore: 21,
@@ -111,7 +111,16 @@ App.Game = Em.Object.extend({
     {
       App.Game.save(App.get('router.gameController.game'));
     }
-  }.observes('score1', 'score2')
+  }.observes('score1', 'score2'),
+
+  pointWon: function(event) {
+    if ($(event.target).is('.score-1')) {
+      this.incrementProperty('score1');
+    }
+    else {
+      this.incrementProperty('score2');
+    }
+  }
 });
 
 App.Game.reopenClass({
@@ -283,17 +292,6 @@ App.Router = Em.Router.extend({
 
       finishMatch: function(router, context) {
         App.Match.finished(router.get('applicationController.match'));
-      },
-
-      pointWon: function(router, context) {
-        var game = router.get('gameController.game');
-
-        if ($(context.target).is('.score-1')) {
-          game.incrementProperty('score1');
-        }
-        else {
-          game.incrementProperty('score2');
-        }
       },
 
       connectOutlets: function(router) {
