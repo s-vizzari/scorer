@@ -15,7 +15,7 @@ development:
   pool: 5
   username: root
   password:
-  socket: /Users/danielbreves/.zendesk/var/run/mysqld/mysqld.sock
+  socket: /Users/stefanvizzari/.zendesk/var/run/mysqld/mysqld.sock
 
 
 # Warning: The database defined as "test" will be erased and
@@ -33,7 +33,7 @@ test:
   pool: 5
   username: root
   password:
-  socket: /Users/danielbreves/.zendesk/var/run/mysqld/mysqld.sock
+  socket: /Users/stefanvizzari/.zendesk/var/run/mysqld/mysqld.sock
 
 # production:
 #   adapter: sqlite3
@@ -47,4 +47,4 @@ production:
   pool: 5
   username: root
   password:
-  socket: /Users/danielbreves/.zendesk/var/run/mysqld/mysqld.sock
+  socket: /Users/stefanvizzari/.zendesk/var/run/mysqld/mysqld.sock
