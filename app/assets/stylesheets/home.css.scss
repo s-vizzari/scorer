@@ -68,9 +68,18 @@ body {
   //padding: 0;
   li {
     border: 8px solid white;
+    position: relative;
     &:first-child {
       border-bottom: none;
     }
+
+    .full-name {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #FFF;
+    }
+
     a {
       background: green;
       cursor: pointer;
@@ -89,6 +98,11 @@ body {
       &:hover {
         color: #ccc;
         text-decoration: none;
+      }
+      &.serving {
+        background-image: url('table-tennis-bat.png');
+        background-repeat: no-repeat;
+        background-position: 20px 30px;
       }
     }
   }

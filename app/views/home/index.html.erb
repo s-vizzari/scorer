@@ -1,11 +1,16 @@
-<!--script type="text/javascript">
-  require('app');
-</script-->
 
 <script type="text/x-handlebars" data-template-name="app-tpl">
+  {{outlet}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="start-tpl">
   <div class="row">
     <div class="span12">
-      {{outlet}}
+      <div class="row start-game">
+        {{collection App.TeamsView itemViewClass="App.ATeamView"}}
+      </div>
+        <a href="#" class="btn btn-large" {{action results}}>Results</a>
+        {{#view view.actionView}}Lets play! <i class="icon-chevron-right"></i>{{/view}}
     </div>
   </div>
 </script>
@@ -17,7 +22,7 @@
       <h3>Team {{view.niceIndex}}</h3>
       <ul>
         {{#each p in view.players}}
-          <li><a {{action togglePlayer p}} class="btn" data-team="team-{{unbound view.niceIndex}}" data-player-handle="{{unbound p.handle}}">{{p.fullName}}</a></li>
+          <li><a {{action togglePlayer p target="view"}} class="btn" data-team="team-{{unbound view.niceIndex}}" data-player-handle="{{unbound p.handle}}">{{p.fullName}}</a></li>
         {{/each}}
       </ul>
     </div>
@@ -35,8 +40,17 @@
     <div class="row">
       <div class="span12">
         <ul class="game">
-          <li><a {{action pointWon}} class="score-1">{{controller.game.score1}}</a></li>
-          <li><a {{action pointWon}} class="score-2">{{controller.game.score2}}</a></li>
+          <li>
+            <span class="full-name">{{controller.match.player1.fullName}}</span>
+            <a {{action pointWon target="controller.game"}} class="score-1 serving">
+              {{controller.game.score1}}</a>
+          </li>
+          <li>
+            <span class="full-name">{{controller.match.player2.fullName}}</span>
+            <a {{action pointWon target="controller.game"}} class="score-2">
+            {{controller.game.score2}}
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -48,7 +62,41 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="results-tpl">
-  
+  <div class="row">
+    <div class="span12">
+      <div class="well">
+        <div class="page-header">
+          <h1>Results</h1>
+        </div>
+        {{#each match in controller}}
+          {{#if match.games}}
+            <h2>Match #{{match.id}}</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Player 1</th>
+                  <th>Score</th>
+                  <th>Score</th>
+                  <th>Player 2</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each game in match.games}}
+                  <tr class="result">
+                    <td>{{match.player1.fullName}}</td>
+                    <td>{{game.score1}}</td>
+                    <td>{{game.score2}}</td>
+                    <td>{{match.player2.fullName}}</td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{/if}}
+        {{/each}}
+        <a href="#" class="btn btn-large" {{action back}}>Back</a>
+      </div>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-handlebars" data-template-name="leaders-tpl">
