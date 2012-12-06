@@ -2,11 +2,11 @@ class MatchesController < ApplicationController
   # GET /matches
   # GET /matches.json
   def index
-    @matches = Match.all
+    @matches = Match.find :all, :order => 'created_at DESC'
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @matches }
+      format.json { render json: @matches.to_json(:include => [:games, :p1, :p2]) }
     end
   end
 

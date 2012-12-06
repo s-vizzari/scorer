@@ -51,9 +51,11 @@ App.Team = Em.Object.extend({
 });
 
 App.Match = Em.Object.extend({
+  id: '',
   games: [],
   player1: null,
   player2: null,
+  createdAt: '',
 
   notReady: function() {
     return this.get('player1') === null || this.get('player2') === null;
@@ -82,12 +84,31 @@ App.Match.reopenClass({
       url: '/matches/'+match.get('id')+'.json',
       type: "PUT",
       data: { match: { finished: true } }
-    }).fail(function() {
-      // console.log('That\'s a fail!');
     }).done(function(resp) {
-      // console.log('We just finished that game!');
       App.router.transitionTo('play');
     })
+  },
+
+  findAll: function() {
+    var matches = [];
+
+    $.getJSON('/matches.json', function(data) {
+      $.each(data, function(i, value) {
+
+        var match = App.Match.create({
+            id: value.id,
+            player1: App.Player.create(value.p1),
+            player2: App.Player.create(value.p2),
+            games: value.games,
+            createdAt: value.created_at
+        });
+
+        match.games = match.games.reverse();
+        matches.addObject(match);
+      });
+    });
+
+    return matches;
   }
 
 });
@@ -163,33 +184,6 @@ App.Game = Em.Object.extend({
   }
 });
 
-App.Game.reopenClass({
-  findAll: function() {
-    var games = [];
-
-    $.getJSON('/games.json', function(data) {
-      $.each(data, function(i, value) {
-        console.log(value);
-
-        var game = App.Game.create({
-          match: App.Match.create({
-            player1: App.Player.create(value.match.p1),
-            player2: App.Player.create(value.match.p2),
-          }),
-          score1: value.score1,
-          score2: value.score2,
-          createdAt: value.created_at
-        });
-
-        console.log(game);
-        games.addObject(game);
-      });
-    });
-
-    return games;
-  }
-});
-
 /* Controllers */
 
 App.ApplicationController = Em.Controller.extend();
@@ -217,10 +211,6 @@ App.ATeamView = Em.View.extend({
 
   notReadyBinding: 'App.router.applicationController.match.notReady',
 
-  notReadyChanged: function() {
-    console.log('changed!');
-  }.observes('notReady'),
-
   niceIndex: function() {
     return this.get('contentIndex') + 1;
   }.property('contentIndex'),
@@ -235,8 +225,6 @@ App.ATeamView = Em.View.extend({
     else {
       m.set('player2', context.context);
     }
-
-    console.log(context.context)
 
     if ($playerBtn.is('.disabled')) return;
 
@@ -358,7 +346,7 @@ App.Router = Em.Router.extend({
       back: Ember.Route.transitionTo('play'),
 
       connectOutlets: function(router) {
-        router.get('applicationController').connectOutlet('results', App.Game.findAll());
+        router.get('applicationController').connectOutlet('results', App.Match.findAll());
       }
     }),
 
