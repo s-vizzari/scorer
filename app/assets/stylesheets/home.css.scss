@@ -10,6 +10,7 @@ body {
   background: #eee;
   position: relative;
   padding-top: 60px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 @media all and (max-width: 979px) {
@@ -96,7 +97,6 @@ body {
       -o-user-select: none;
       user-select: none;
       &:hover {
-        color: #ccc;
         text-decoration: none;
       }
       &.serving {
