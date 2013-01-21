@@ -12,18 +12,20 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :first_name %><br />
+    <%= f.label :first_name %>
     <%= f.text_field :first_name %>
   </div>
   <div class="field">
-    <%= f.label :last_name %><br />
+    <%= f.label :last_name %>
     <%= f.text_field :last_name %>
   </div>
   <div class="field">
-    <%= f.label :handle %><br />
+    <%= f.label :handle %>
     <%= f.text_field :handle %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
+
+  <div class="actions form-actions">
+    <%= f.submit 'Save Player', :class => 'btn btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")), players_path, :class => 'btn' %>
   </div>
 <% end %>
