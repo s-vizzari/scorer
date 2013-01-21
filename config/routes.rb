@@ -8,6 +8,8 @@ Scorer::Application.routes.draw do
 
   resources :games
 
+  get 'leaders' => 'players#leaders', :as => :leaders
+
   get "home/index"
 
   # The priority is based upon order of creation:

@@ -1,7 +1,6 @@
 class Player < ActiveRecord::Base
   attr_accessible :first_name, :handle, :last_name
   has_many :matches
-  has_many :games, :through => :matches
   validates :first_name, :presence => true
   validates :last_name, :presence => true
 
@@ -14,4 +13,25 @@ class Player < ActiveRecord::Base
     end
   end
 
+  def matches
+    Match.where("player1 = ? OR player2 = ?", id, id)
+  end
+
+  def games
+    matches.map do |match|
+      match.games
+    end.flatten
+  end
+
+  def games_won
+    games.select do |game|
+      self == game.winner
+    end
+  end
+
+  def matches_won
+    matches.select do |match|
+      self == match.winner
+    end
+  end
 end
