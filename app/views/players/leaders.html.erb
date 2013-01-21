@@ -1,0 +1,30 @@
+  <div class="row">
+    <div class="span12">
+      <div class="well">
+        <div class="page-header">
+          <h1>Leaderboard</h1>
+        </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Matches won</th>
+                <th>Games won</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @leaders.each_with_index do |leader, index| %>
+                <tr class="result">
+                  <td><%= index + 1 %></td>
+                  <td><%= "#{leader.first_name} #{leader.last_name}" %></td>
+                  <td><%= leader.matches_won.size %></td>
+                  <td><%= leader.games_won.size %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <a href="/" class="btn btn-large">Back</a>
+      </div>
+    </div>
+  </div>

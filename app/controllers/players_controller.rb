@@ -10,6 +10,17 @@ class PlayersController < ApplicationController
     end
   end
 
+  # GET /leaders
+  # GET /leaders.json
+  def leaders
+    @leaders = Player.all.sort {|p2,p1| p1.matches_won.size <=> p2.matches_won.size}
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render :json => @leaders }
+    end
+  end
+
   # GET /players/1
   # GET /players/1.json
   def show
